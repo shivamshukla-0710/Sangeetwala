@@ -1,0 +1,90 @@
+﻿using System;
+using System.Data;
+using System.Configuration;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Xml.Linq;
+using System.Data.SqlClient;
+
+/// <summary>
+/// Summary description for User
+/// </summary>
+public class User
+{
+    public User(Int32 UserID, int LevelsCount)
+        //public User(int UserID, SqlConnection Con)
+        
+    {
+        this.LevelsCount = LevelsCount + 1;
+        if (this.LevelsCount < 7)
+        {
+            this.UserId = UserID;
+            DataTable dt;
+            if (UserID != 0)
+            {
+                
+                //string sql = "Select * from tbl_UserHierarchy where UserID=" + UserId + "";
+                //SqlDataAdapter adp = new SqlDataAdapter(sql, Con);
+                //dt = new DataTable();
+                //adp.Fill(dt);
+                //dt = brajesh.SearchMemberfromBinarytree(0, Convert.ToInt32(UserID));
+            }
+            else
+            {
+                dt = null;
+            }
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                this.UserId = UserID;
+                this.Name = dt.Rows[0]["mem_name"].ToString();
+                this.Member_id = dt.Rows[0]["member_id"].ToString();
+                this.Member_User = dt.Rows[0]["username"].ToString();
+                this.package = dt.Rows[0]["package_type"].ToString(); 
+              //  this.u_id = dt.Rows[0]["UserID"].ToString();
+                this.Parent = new User(Convert.ToInt32(dt.Rows[0]["parent_id"] == DBNull.Value ? 0 : dt.Rows[0]["parent_id"]), this.LevelsCount);
+                this.LeftChild = new User(Convert.ToInt32(dt.Rows[0]["left_child_id"] == DBNull.Value ? 0 : dt.Rows[0]["left_child_id"]), this.LevelsCount);
+                this.RightChild = new User(Convert.ToInt32(dt.Rows[0]["right_child_id"] == DBNull.Value ? 0 : dt.Rows[0]["right_child_id"]), this.LevelsCount);
+
+                //this.Parent = new User(Convert.ToInt32(dt.Rows[0]["ParentID"]), Con);
+                //this.LeftChild = new User(Convert.ToInt32(dt.Rows[0]["LChildID"]), Con);
+                //this.RightChild = new User(Convert.ToInt32(dt.Rows[0]["RChildID"]), Con);
+
+
+            }
+            else
+            {
+                this.Name = null;
+                this.Parent = null;
+                this.LeftChild = null;
+                this.RightChild = null;
+                this.package = null;
+                this.Member_id = null;
+            }
+        }        
+    }
+
+    public int UserId { get; private set; }
+
+    public int LevelId { get; private set; }
+
+    int LevelsCount;
+
+   // public string u_id { get; private set; }
+
+
+    public string Name { get; private set; }
+    public string Member_id { get; private set; }
+    public string Member_User { get; private set; }
+    public string package { get; private set; }
+
+    public User Parent { get; private set; }
+
+    public User LeftChild { get; private set; }
+
+    public User RightChild { get; private set; }
+}

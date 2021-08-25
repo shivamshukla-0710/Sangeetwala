@@ -1,0 +1,1871 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Collections;
+using System.Web.Services.Protocols;
+using System.Xml.Linq;
+using System.Data.Common;
+using Microsoft.Practices.EnterpriseLibrary.Data;
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+
+
+/// <summary>
+/// Summary description for brajesh
+/// </summary>
+[WebService(Namespace = "http://tempuri.org/")]
+[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+// To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+ [System.Web.Script.Services.ScriptService]
+public class brajesh : System.Web.Services.WebService 
+{
+    static int count = 0;
+    static int count1 = 0;
+  
+   
+    public brajesh () 
+    {
+
+        //Uncomment the following line if using designed components 
+        //InitializeComponent(); 
+    }
+
+    [WebMethod]
+    public string HelloWorld() 
+    {
+        return "Hello World";
+    }
+    #region ********************************************Insert News & Events ***********************
+    
+    [WebMethod]
+    public static object InsertNews(Int32 news_id, string news_title, string news, Int32 spmode) 
+          	
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_news");
+            db.AddInParameter(cmd, "@news_id", DbType.Int32, news_id);
+            db.AddInParameter(cmd, "@news_title", DbType.String, news_title);
+            db.AddInParameter(cmd, "@news", DbType.String, news);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+    # region ********************************************Show & search News ***********************
+    [WebMethod]
+    public static DataTable SearchNews(string news_id, string news)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchNews");
+            db.AddInParameter(cmd, "@news_id", DbType.String, news_id);
+            db.AddInParameter(cmd, "@news", DbType.String, news);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    #region ********************************************Insert Country ***********************
+
+    [WebMethod]
+    public static object InsertCountry(Int32 CountryId, string CountryName, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_country");
+            db.AddInParameter(cmd, "@country_Id", DbType.Int32, CountryId);
+            db.AddInParameter(cmd, "@country_name", DbType.String, CountryName);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+ 
+    # region ********************************************Show & search Country ***********************
+    [WebMethod]
+    public static DataTable SearchCountry(string CountryId, string Country)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchCountry");
+            db.AddInParameter(cmd, "@country_id", DbType.String, CountryId);
+            db.AddInParameter(cmd, "@country_name", DbType.String, Country);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    #region ********************************************Insert State ***********************
+   
+    [WebMethod]
+    public static object InsertState(Int32 StateId,Int32 CountryId, string StateName, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_state");
+            db.AddInParameter(cmd, "@State_id", DbType.Int32, StateId);
+            db.AddInParameter(cmd, "@country_id", DbType.Int32, CountryId);
+            db.AddInParameter(cmd, "@state_name", DbType.String, StateName);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+    # region ********************************************Show & search State ***********************
+    [WebMethod]
+    public static DataTable SearchState(string StateId,string CountryId, string State)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchState");
+            db.AddInParameter(cmd, "@state_id", DbType.String, StateId);
+            db.AddInParameter(cmd, "@country_id", DbType.String, CountryId);
+            db.AddInParameter(cmd, "@state_name", DbType.String, State);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    #region ********************************************Insert City ***********************
+
+    [WebMethod]
+    public static object InsertCity(Int32 CityId,Int32 StateId, Int32 CountryId, string CityName, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_city");
+            db.AddInParameter(cmd, "@city_id", DbType.Int32, CityId);
+            db.AddInParameter(cmd, "@state_id", DbType.Int32, StateId);
+            db.AddInParameter(cmd, "@country_id", DbType.Int32, CountryId);
+            db.AddInParameter(cmd, "@city_name", DbType.String, CityName);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+    # region ********************************************Show & search City ***********************
+    [WebMethod]
+    public static DataTable Searchcity(string CityId, string StateId, string CountryId, string City)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_searchCity");
+            db.AddInParameter(cmd, "@city_id", DbType.String, CityId);
+            db.AddInParameter(cmd, "@state_id", DbType.String, StateId);
+            db.AddInParameter(cmd, "@country_id", DbType.String, CountryId);
+            db.AddInParameter(cmd, "@city_name", DbType.String, City);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Validate user login ***********************
+    [WebMethod]
+    public static DataTable ValidateUser(Int32 member_id, string user_name, string Password)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_user_login");
+            db.AddInParameter(cmd, "@member_id", DbType.String, member_id);
+            db.AddInParameter(cmd, "@username", DbType.String, user_name);
+            db.AddInParameter(cmd, "@mem_password", DbType.String, Password);
+        
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Validate Admin login ***********************
+    [WebMethod]
+    public static DataTable ValidateAdmin(Int32 admin_id, string Email, string Password)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_admin_login");
+            db.AddInParameter(cmd, "@admin_id", DbType.Int32, admin_id);
+            db.AddInParameter(cmd, "@admin_email", DbType.String, Email);
+            db.AddInParameter(cmd, "@admin_password", DbType.String, Password);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+
+    #region ********************************************Insert member to database ***********************
+
+    [WebMethod]
+
+    public static object Insertmember(Int32 member_id, Int32 parent_id, Int32 upline_id ,string mem_name, string mem_email, string username, string mem_password, string contact_number, string date_of_birth, string nominee_name, string verification_code, string nominee_relation, string mem_address, string city_name, Int32 state_id, Int32 country_id, string ifsc_code, string acount_number, string account_holder_name, string bank_name, string bank_branch, string pan_number, string gender, string mem_reg_exp_date, string standing_position,string Package,string address2, string Registration_date,string Amount_type,string Amount_details,string items, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_member");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@parent_id", DbType.Int32, parent_id);
+       db.AddInParameter(cmd, "@upline_id", DbType.Int32, upline_id);
+            db.AddInParameter(cmd, "@mem_name", DbType.String, mem_name);
+            db.AddInParameter(cmd, "@mem_email", DbType.String, mem_email);
+            db.AddInParameter(cmd, "@username", DbType.String, username);
+            db.AddInParameter(cmd, "@mem_password", DbType.String, mem_password);
+            db.AddInParameter(cmd, "@contact_number", DbType.String, contact_number);
+            db.AddInParameter(cmd, "@date_of_birth", DbType.String, date_of_birth);
+            db.AddInParameter(cmd, "@nominee_name", DbType.String, nominee_name);
+
+            db.AddInParameter(cmd, "@verification_code", DbType.String, verification_code);
+            db.AddInParameter(cmd, "@nominee_relation", DbType.String, nominee_relation);
+            db.AddInParameter(cmd, "@mem_address", DbType.String, mem_address);
+            db.AddInParameter(cmd, "@city_name", DbType.String, city_name);
+            db.AddInParameter(cmd, "@state_id", DbType.Int32, state_id);
+            db.AddInParameter(cmd, "@country_id", DbType.Int32, country_id);
+            db.AddInParameter(cmd, "@ifsc_code", DbType.String, ifsc_code);
+            db.AddInParameter(cmd, "@acount_number", DbType.String, acount_number);
+            db.AddInParameter(cmd, "@account_holder_name", DbType.String, account_holder_name);
+
+            db.AddInParameter(cmd, "@bank_name", DbType.String, bank_name);
+            db.AddInParameter(cmd, "@bank_branch", DbType.String, bank_branch);
+            db.AddInParameter(cmd, "@pan_number", DbType.String, pan_number);
+            db.AddInParameter(cmd, "@gender", DbType.String, gender);
+            db.AddInParameter(cmd, "@mem_reg_exp_date", DbType.String, mem_reg_exp_date);
+            db.AddInParameter(cmd, "@standing_position", DbType.String, standing_position);
+            db.AddInParameter(cmd, "@package_type", DbType.String,Package);
+            db.AddInParameter(cmd, "@mem_address2", DbType.String, address2);
+            db.AddInParameter(cmd, "@Registration_date", DbType.String, Registration_date);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+
+            db.AddInParameter(cmd, "@Amount_type", DbType.String, Amount_type);
+            db.AddInParameter(cmd, "@Amount_details", DbType.String, Amount_details);
+            db.AddInParameter(cmd, "@items", DbType.String, items);
+            
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+           return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+
+
+    #region ********************************************Insert Binary tree Member to database ***********************
+
+    [WebMethod]
+
+    public static object InsertbinaryTreemember(Int32 binary_id, string member_id, Int32 parent_id, string left_child_id, string right_child_id, string parent_child_id,string bdate,Int32 level_postion, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_binary_tree");
+            db.AddInParameter(cmd, "@binary_id", DbType.Int32, binary_id);
+            db.AddInParameter(cmd, "@member_id", DbType.String, member_id);
+            db.AddInParameter(cmd, "@parent_id", DbType.Int32, parent_id);
+            db.AddInParameter(cmd, "@left_child_id", DbType.String, left_child_id);
+            db.AddInParameter(cmd, "@right_child_id", DbType.String, right_child_id);
+            db.AddInParameter(cmd, "@parent_child_id", DbType.String, parent_child_id);
+            db.AddInParameter(cmd, "@binary_created_date", DbType.Date, Convert.ToDateTime(bdate));
+            db.AddInParameter(cmd, "@level_postion", DbType.Int32, level_postion);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+    # region ********************************************Search  member redid ***********************
+    [WebMethod]
+    public static DataTable SearchMemberred(Int32 member_id, string mem_name)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchAllMemberred");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@mem_name", DbType.String, mem_name);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Search  member redid to green id ***********************
+    [WebMethod]
+    public static DataTable SearchMemberredtogreen(Int32 member_id, string mem_name)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchAllMemberredtogreen");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@mem_name", DbType.String, mem_name);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Search  member ***********************
+    [WebMethod]
+    public static DataTable SearchMember(Int32 member_id, string mem_name)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchAllMember");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@mem_name", DbType.String, mem_name);
+          
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        } 
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Search  member by receipt ***********************
+    [WebMethod]
+    public static DataTable SearchMemberbyreceipt(Int32 member_id, string mem_name,Int32 min, Int32  max)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchAllMemberbyreceipt");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@mem_name", DbType.String, mem_name);
+            db.AddInParameter(cmd, "@minid", DbType.Int32, min);
+            db.AddInParameter(cmd, "@maxid", DbType.Int32, max);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Search  achievers ***********************
+    [WebMethod]
+    public static DataTable SearchAchiever(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_search_achiever");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+          
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Show & search binary member ***********************
+    [WebMethod]
+    public static DataTable SearchMemberfromBinarytree(Int32 binary_id, Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_Search_binary_tree");
+            db.AddInParameter(cmd, "@binary_id", DbType.String, binary_id);
+            db.AddInParameter(cmd, "@member_id", DbType.String, member_id);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+    #region *********************************find left most or right most child ***********************
+
+    [WebMethod]
+
+    public static string [] GetNewParentIdforLeft_or_Right(Int32 MemberID, string standingposition)
+    {
+
+         string[] details = new string[3];
+
+            string position = "";
+
+            DataTable dt = SearchMemberfromBinarytree(0, MemberID);
+            //SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            //adp.Fill(dt);
+            if (standingposition == "Left")
+            {
+                position = "left_child_id";
+            }
+            else
+            {
+                position = "right_child_id";
+            }
+            if (dt != null && dt.Rows.Count > 0 && dt.Rows[0][position] != DBNull.Value)
+            {
+                return GetNewParentIdforLeft_or_Right(Convert.ToInt32(dt.Rows[0][position].ToString()), standingposition);
+            }
+            else
+            {
+                details[0] = dt.Rows[0]["member_id"].ToString();
+                details[1] = dt.Rows[0]["parent_child_id"].ToString();
+                details[2] = dt.Rows[0]["binary_id"].ToString();
+
+                
+            }
+            return details;
+
+        
+        
+        
+        
+    }
+   
+    
+
+    #endregion
+
+    #region ****************Change member password**************************
+
+    [WebMethod]
+    public static object changeMemberPassword(Int32 member_id, string oldPassword, string newPassword, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_change_member_password");
+            db.AddInParameter(cmd, "@member_id", DbType.String, member_id);
+            db.AddInParameter(cmd, "@mem_old_password", DbType.String, oldPassword);
+            db.AddInParameter(cmd, "@mem_password", DbType.String, newPassword);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+    #region ****************Change admin password**************************
+
+    [WebMethod]
+    public static object changeAdminPassword(Int32 admin_id, string oldPassword, string newPassword, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_change_admin_password");
+            db.AddInParameter(cmd, "@admin_id", DbType.String, admin_id);
+            db.AddInParameter(cmd, "@admin_old_password", DbType.String, oldPassword);
+            db.AddInParameter(cmd, "@admin_password", DbType.String, newPassword);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion  
+
+     # region ********************************************Show & search All referral count by parent id ***********************
+    [WebMethod]
+    public static DataTable Allreferralcount(string parent)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_all_referral");
+            db.AddInParameter(cmd, "@parent_id", DbType.String, parent);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search upline id ***********************
+    [WebMethod]
+    public static DataTable searchupline(string member)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_uplineid");
+            db.AddInParameter(cmd, "@member_id", DbType.String, member);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search daily pairing  ***********************
+    [WebMethod]
+    public static DataTable countWeeklypair(string member)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_all_child_mem_date");
+            db.AddInParameter(cmd, "@member_id", DbType.String, member);
+            //db.AddInParameter(cmd, "@regpdate", DbType.Date, Convert.ToDateTime( regpdate));
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    #region ********************************************Insert into pair count ***********************
+
+    [WebMethod]
+
+    public static object Insertpaircount(Int32 pair_id, Int32 member_id, Int32 total_left_child_count, Int32 total_right_child_count, Decimal total_paying_amount, Decimal total_tax_amount, Decimal net_amount, Int32 total_pair_count, Int32 carry_forward_left_child, Int32 carry_forward_right_child, Int32 paid_pair_count,Int32 Bonus, string regrdate,string regpdate, Int32 spmode)
+    {
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_pair_count");
+            db.AddInParameter(cmd, "@pair_id", DbType.Int32, pair_id);
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@total_left_child_count", DbType.Int32, total_left_child_count);
+            db.AddInParameter(cmd, "@total_right_child_count", DbType.Int32, total_right_child_count);
+            db.AddInParameter(cmd, "@total_paying_amount", DbType.Decimal, total_paying_amount);
+            db.AddInParameter(cmd, "@total_tax_amount", DbType.Decimal, total_tax_amount);
+
+            db.AddInParameter(cmd, "@net_amount", DbType.Decimal, net_amount);
+            db.AddInParameter(cmd, "@total_pair_count", DbType.Int32, total_pair_count);
+            db.AddInParameter(cmd, "@carry_forward_left_child", DbType.Int32, carry_forward_left_child);
+            db.AddInParameter(cmd, "@carry_forward_right_child", DbType.Int32, carry_forward_right_child);
+            db.AddInParameter(cmd, "@paid_pair_count", DbType.String, paid_pair_count);
+            db.AddInParameter(cmd, "@Bonus", DbType.String, Bonus);
+            db.AddInParameter(cmd, "@pair_count_created_date", DbType.Date, Convert.ToDateTime(regrdate));
+            db.AddInParameter(cmd, "@regdate", DbType.Date, Convert.ToDateTime(regpdate));
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+    # region ********************************************Show & search pair count ***********************
+    [WebMethod]
+    public static DataTable searchpaircount(Int32 member_id, string request_status)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_pair_count");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@request_status", DbType.String, request_status);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search all reward ***********************
+    [WebMethod]
+    public static DataTable searchreward()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("searchallreward");
+           
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+ 
+
+    # region ********************************************Show & search reward ***********************
+    [WebMethod]
+    public static DataTable searchreward(Int32 spmode,string member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_reward");
+            db.AddInParameter(cmd, "@member_id", DbType.String, member_id);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+           using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    #region ********************************************Insert into reward ***********************
+
+    [WebMethod]
+    public static object Insert_member_reward( Int32 member_id,Int32 reward_status,Int32 spmode)
+    {
+
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_member_reward");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@reward_status", DbType.Int32, reward_status);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+
+            throw;
+        }
+    }
+
+    #endregion
+
+
+
+    #region ********************************************Insert into reward by date ***********************
+
+    [WebMethod]
+    public static object Insertreward(Int32 reward_id,Int32 member_id,string reward, Int32 reward_status, Int32 spmode)
+    {
+
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_reward");
+            db.AddInParameter(cmd, "@reward_id", DbType.Int32, reward_id);
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@reward", DbType.String, reward);
+            db.AddInParameter(cmd, "@reward_status", DbType.Int32, reward_status);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+
+            throw;
+        }
+    }
+
+    #endregion
+
+    # region ********************************************Show & search binary details  ***********************
+    [WebMethod]
+    public static DataTable searchbinarydetails(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_member_payment_detail");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+          
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+    #region ********************************************Insert into admin reward ***********************
+
+    [WebMethod]
+    public static object Insertadminreward(Int32 reward_id, string reward,Int32 pair, Int32 spmode)
+    {
+
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_set_reward");
+            db.AddInParameter(cmd, "@reward_id", DbType.Int32, reward_id);
+            db.AddInParameter(cmd, "@reward", DbType.String, reward);
+            db.AddInParameter(cmd, "@pair", DbType.Int32, pair);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+
+            throw;
+        }
+    }
+
+    #endregion
+
+     # region ********************************************Show & search admin reward  ***********************
+    [WebMethod]
+    public static DataTable searchadminreward(Int32 reward_id, string reward)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_set_reward");
+            db.AddInParameter(cmd, "@set_reward_id", DbType.Int32, reward_id);
+            db.AddInParameter(cmd, "@set_reward_name", DbType.String, reward);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search rewarddate  ***********************
+    [WebMethod]
+    public static DataTable searchrewarddate(Int32 member_id, Int32 spmode)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_reward");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Show & search blocked member  ***********************
+    [WebMethod]
+    public static DataTable searchblockedmember(Int32 member_id,string member_name)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_SearchblockedMember");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@mem_name", DbType.String, member_name);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Validate user info***********************
+    [WebMethod]
+    public static DataTable ValidateUserInfo(Int32 member_id,  string user_name)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_search_member_by_username");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@username", DbType.String, user_name);
+           
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search All Package ***********************
+    [WebMethod]
+    public static DataTable searchPackage(Int32 package_id,string packagename)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_package");
+            db.AddInParameter(cmd, "@package_id", DbType.Int32, package_id);
+            db.AddInParameter(cmd, "@package_name", DbType.String, packagename);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search total pair ***********************
+    [WebMethod]
+    public static DataTable searchtotalpair(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_totalpair");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search total direct ***********************
+    [WebMethod]
+    public static DataTable searchtotalDirect(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_referral");
+            db.AddInParameter(cmd, "@parent_id", DbType.Int32, member_id);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search All type child count by member id ***********************
+    [WebMethod]
+    public static DataTable Allchildcount(string member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_all_child");
+            db.AddInParameter(cmd, "@member_id", DbType.String, member_id);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+    # region ********************************************Show & search All child count by parent child id***********************
+    [WebMethod]
+    public static DataTable Alltypechildcount(string parent_child_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_child");
+            db.AddInParameter(cmd, "@parent_child_id", DbType.String, parent_child_id);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    #region ********************************************Insert into monthly incentive ***********************
+
+    [WebMethod]
+    public static object Insertmonthlyincentive(Int32 monthly_incentive_id, Int32 member_id, Int32 total_direct_child, string monthly_incentive, string month_name, string year_name, Int32 incentive_status, Int32 spmode)
+    {
+
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_monthly_incentive");
+            db.AddInParameter(cmd, "@monthly_incentive_id", DbType.Int32, monthly_incentive_id);
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@total_direct_child", DbType.Int32, total_direct_child);
+            db.AddInParameter(cmd, "@monthly_incentive", DbType.String, monthly_incentive);
+            db.AddInParameter(cmd, "@month_name", DbType.String, month_name);
+            db.AddInParameter(cmd, "@year_name", DbType.String, year_name);
+            db.AddInParameter(cmd, "@incentive_status", DbType.Int32, incentive_status);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+
+            throw;
+        }
+    }
+
+    #endregion
+
+
+    # region ********************************************Show & search monthly incentive ***********************
+    [WebMethod]
+    public static DataTable searchmonthlyincentive(Int32 member_id,string month,string year)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_monthly_incentive");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@month", DbType.String, month);
+            db.AddInParameter(cmd, "@year", DbType.String, year);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search amount  ***********************
+    [WebMethod]
+    public static DataTable searchamount(Int32 amount_id, string amount_type)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_amount");
+            db.AddInParameter(cmd, "@amount_id", DbType.Int32, amount_id);
+            db.AddInParameter(cmd, "@amount_type", DbType.String, amount_type);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    #region ********************************************Insert into tbl_amount ***********************
+
+    [WebMethod]
+    public static object Insertamount(Int32 amount_id, string amount_type, Decimal amount, Int32 spmode)
+    {
+
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_amount");
+            db.AddInParameter(cmd, "@amount_id", DbType.Int32, amount_id);
+            db.AddInParameter(cmd, "@amount_type", DbType.String, amount_type);
+            db.AddInParameter(cmd, "@amount", DbType.Decimal, amount);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+
+            throw;
+        }
+    }
+
+    #endregion
+
+
+    # region ********************************************Show & search weekly payout ***********************
+    [WebMethod]
+    public static DataTable searchweeklypayout(Int32 member_id,Int32 pair_id, string created_date,Int32 spmode)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_weekly_payout");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@pair_id", DbType.Int32, pair_id);
+            db.AddInParameter(cmd, "@pair_count_created_date", DbType.String, created_date);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Search member by username ***********************
+    [WebMethod]
+    public static DataTable SearchMemberbyusername(Int32 member_id,string Username )
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_search_member_by_username");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@username", DbType.String, Username);
+           using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Search lastcarryforward ***********************
+    [WebMethod]
+    public static DataTable Searchlastcarryforward(Int32 member_id, string regpdate)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("Proc_search_last_carryforward");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@regpdate", DbType.Date, Convert.ToDateTime( regpdate));
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search memberid by parentid  ***********************
+    [WebMethod]
+    public static DataTable searchmemberidbyparentid(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("find_memberid_by_parentid");
+            db.AddInParameter(cmd, "@parent_id", DbType.Int32, member_id);
+            
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search downlink  ***********************
+    [WebMethod]
+    public static DataTable searchdownlink(Int32 member_id, Int32 spmode)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_member_id_detail");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@spmode", DbType.Int32, spmode);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search Bonus ***********************
+    [WebMethod]
+    public static DataTable searchBonus(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_Bonus");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+           using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    #region ********************************************Insert into Company Growth Income ***********************
+
+    [WebMethod]
+    public static object InsertCompanyGrowth(Int32 member_id, Int32 total_member, Int32 member_level, Int32 member_growth_income)
+    {
+
+        try
+        {
+            object msg = null;
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_insert_company_growth");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@total_member", DbType.Int32, total_member);
+            db.AddInParameter(cmd, "@member_level", DbType.Int32, member_level);
+            db.AddInParameter(cmd, "@member_growth_income", DbType.Int32, member_growth_income);
+            db.AddOutParameter(cmd, "@msg", DbType.String, 100);
+            db.ExecuteNonQuery(cmd);
+            msg = db.GetParameterValue(cmd, "@msg");
+            return msg;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+
+            throw;
+        }
+    }
+
+    #endregion
+
+
+
+    # region ********************************************Show & search Company Growth Income ***********************
+    [WebMethod]
+    public static DataTable searchCompanyGrowth(Int32 member_id, Int32 member_level)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_search_company_growth_income");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@member_level", DbType.Int32, member_level);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search Company total Member ***********************
+    [WebMethod]
+    public static DataTable searchCompanytotalmember(Int32 member_id)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_total_company_member");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+           using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+
+    # region ********************************************Show & search Company top Member ***********************
+    [WebMethod]
+    public static DataTable searchCompanytopmember(Int32 member_id,Int32 top_member)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            DbCommand cmd = db.GetStoredProcCommand("proc_count_top_member");
+            db.AddInParameter(cmd, "@member_id", DbType.Int32, member_id);
+            db.AddInParameter(cmd, "@top_member", DbType.Int32, top_member);
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search weekly payout  new ***********************
+    [WebMethod]
+    public static DataTable searchweeklypayout_new(Int32 member_id, string month, string year, string week)
+    {
+        try
+        {
+            //DataTable dt = new DataTable();
+            Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("Search_Weekly_Payout_new");
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("Search_Weekly_Payout_new", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@member_id", (object)member_id);
+            cmd.Parameters.AddWithValue("@month", (object)month);
+            cmd.Parameters.AddWithValue("@year", (object)year);
+            cmd.Parameters.AddWithValue("@week", (object)week);
+
+            using (IDataReader dr = db.ExecuteReader(cmd))
+            {
+                dt.Load(dr);
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search weekly payout status ***********************
+    [WebMethod]
+    public static DataTable getweeklypayout_status(Int32 member_id, string month, string year, string week, string status)
+    {
+        try
+        {
+            //DataTable dt = new DataTable();
+            //Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("getWeeklyPayour_status");
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("getWeeklyPayour_status", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@member_id", (object)member_id);
+            cmd.Parameters.AddWithValue("@month", (object)month);
+            cmd.Parameters.AddWithValue("@year", (object)year);
+            cmd.Parameters.AddWithValue("@week", (object)week);
+            cmd.Parameters.AddWithValue("@status", (object)status);
+            dt.Clear();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(dt);
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    #region ********************************************Insert Weekly Payout ***********************
+
+    [WebMethod]
+
+    public static object InsertWeeklyPayout(Int32 payout_id, Int32 member_id, string mem_name, string week_payout,
+        Int32 total_left_child_count, Int32 total_right_child_count, Int32 left_carry, Int32 right_carry,
+        Int32 prev_left, Int32 prev_right, Int32 prev_left_carry, Int32 prev_right_carry, Decimal total_paying_amount,
+        Decimal total_tax_amount, Decimal net_amount, Int32 total_pair_count, string amount_status,
+        string amount_type, string cheque_details, string bank_name, string paid_date, string first_date,
+        string second_date, Int32 spmode)
+    {
+        try
+        {
+            //object msg = null;
+            //Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("proc_insert_weekly_payout");
+            string result = null;
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("proc_insert_weekly_payout", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            if (con.State == ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            cmd.Parameters.AddWithValue("@payout_id", (object)payout_id);
+            cmd.Parameters.AddWithValue("@member_id", (object)member_id);
+            cmd.Parameters.AddWithValue("@member_name", (object)mem_name);
+            cmd.Parameters.AddWithValue("@week_payout", (object)week_payout);
+            cmd.Parameters.AddWithValue("@total_left_child_count", (object)total_left_child_count);
+            cmd.Parameters.AddWithValue("@total_right_child_count", (object)total_right_child_count);
+            cmd.Parameters.AddWithValue("@left_carry", (object)left_carry);
+            cmd.Parameters.AddWithValue("@right_carry", (object)right_carry);
+
+            cmd.Parameters.AddWithValue("@prev_left", (object)prev_left);
+            cmd.Parameters.AddWithValue("@prev_right", (object)prev_right);
+            cmd.Parameters.AddWithValue("@prev_left_carry", (object)prev_left_carry);
+            cmd.Parameters.AddWithValue("@prev_right_carry", (object)prev_right_carry);
+
+            cmd.Parameters.AddWithValue("@total_paying_amount", (object)total_paying_amount);
+            cmd.Parameters.AddWithValue("@total_tax_amount", (object)total_tax_amount);
+
+            cmd.Parameters.AddWithValue("@net_amount", (object)net_amount);
+            cmd.Parameters.AddWithValue("@total_pair_count", (object)total_pair_count);
+
+
+            cmd.Parameters.AddWithValue("@amount_status", (object)amount_status);
+            cmd.Parameters.AddWithValue("@amount_type", (object)amount_type);
+            cmd.Parameters.AddWithValue("@cheque_details", (object)cheque_details);
+            cmd.Parameters.AddWithValue("@bank_name", (object)bank_name);
+            cmd.Parameters.AddWithValue("@paid_date", (object)paid_date);
+            cmd.Parameters.AddWithValue("@first_date", (object)first_date);
+            cmd.Parameters.AddWithValue("@second_date", (object)second_date);
+            cmd.Parameters.AddWithValue("@spmode", (object)spmode);
+            SqlParameter msg = new SqlParameter("@msg", SqlDbType.NVarChar, 500);
+            cmd.Parameters.Add(msg);
+            msg.Direction = ParameterDirection.Output;
+            cmd.ExecuteNonQuery();
+            result = msg.Value.ToString();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            string ty = ex.Message;
+            throw;
+        }
+    }
+
+    #endregion
+
+
+    # region ********************************************Show & search weekly payout By Payout ID ***********************
+    [WebMethod]
+    public static DataTable getWeeklyPayour_ByPayoutID(Int32 payout_id)
+    {
+        try
+        {
+            //DataTable dt = new DataTable();
+            //Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("getWeeklyPayour_ByPayoutID");
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("getWeeklyPayour_ByPayoutID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@payout_id", (object)payout_id);
+
+            dt.Clear();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(dt);
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ******************************************** Show & search Package ***********************
+    [WebMethod]
+    public static DataTable searchPackage_new(Int32 member_id)
+    {
+        try
+        {
+            //DataTable dt = new DataTable();
+            //Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("Search_package_new");
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("Search_package_new", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@member_id", (object)member_id);
+            dt.Clear();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(dt);
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ******************************************** Show & search Bonus by member ***********************
+    [WebMethod]
+    public static DataTable searchBonus_new(Int32 member_id, string date1, string date2)
+    {
+        try
+        {
+            //DataTable dt = new DataTable();
+            //Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("proc_search_Bonus_byDate");
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("proc_search_Bonus_byDate", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@member_id", (object)member_id);
+            cmd.Parameters.AddWithValue("@start_date", (object)date1);
+            cmd.Parameters.AddWithValue("@last_date", (object)date2);
+            dt.Clear();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(dt);
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+
+
+    # region ********************************************Show & search weekly payout status Date ***********************
+    [WebMethod]
+    public static DataTable getweeklypayout_statusByDate(Int32 member_id, string firstdate, string lastdate, string status, int mode)
+    {
+        try
+        {
+            //DataTable dt = new DataTable();
+            //Database db = DatabaseFactory.CreateDatabase();
+            //DbCommand cmd = db.GetStoredProcCommand("getWeeklyPayour_status_BYDate");
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Connection String"].ToString());
+            SqlCommand cmd = new SqlCommand("getWeeklyPayour_status_BYDate", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@member_id", (object)member_id);
+            cmd.Parameters.AddWithValue("@first_date", (object)firstdate);
+            cmd.Parameters.AddWithValue("@last_date", (object)lastdate);
+            cmd.Parameters.AddWithValue("@status", (object)status);
+            cmd.Parameters.AddWithValue("@mode", (object)mode);
+            dt.Clear();
+            SqlDataAdapter adp = new SqlDataAdapter(cmd);
+            adp.Fill(dt);
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            throw;
+        }
+    }
+    #endregion
+    }
+
+
+
+   
+
+
+
+
+
